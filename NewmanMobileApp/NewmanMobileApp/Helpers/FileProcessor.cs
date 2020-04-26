@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -28,10 +29,15 @@ namespace NewmanMobileApp.Helpers
 
         public static void ReadFile()
         {
+
+            
             try
             {
-                Debug.WriteLine("TEMP LOCATION: " + tempLocation);
-                using (var reader = new StreamReader(QuizPage.quizFilePath))
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = "NewmanMobileApp.Resources.questions.txt";
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream))
                 {
                     QuizPage._quiz = new List<string>();
                     var textInBetween = new List<string>();

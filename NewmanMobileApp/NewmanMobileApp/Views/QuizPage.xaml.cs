@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NewmanMobileApp.Data;
+using NewmanMobileApp.Helpers;
 using NewmanMobileApp.QuizData;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -30,13 +33,37 @@ namespace NewmanMobileApp.Views
         public QuizPage()
         {
             InitializeComponent();
+            ActivityIndicatorStart();
+            this.Appearing += QuizPage_Appearing;
+            FileProcessor.ReadFile();
+            ActivityIndicatorStop();
+
+            }
+
+        private void QuizPage_Appearing(object sender, EventArgs e)
+        {
+
         }
 
+        private void ActivityIndicatorStart()
+        {
+            indicator.IsEnabled = true;
+            indicator.IsRunning = true;
+            indicator.IsVisible = true;
+        }
+
+        private void ActivityIndicatorStop()
+        {
+            indicator.IsEnabled = false;
+            indicator.IsRunning = false;
+            indicator.IsVisible = false;
+        }
 
         public async void QuizStartButton_Clicked(object sender, EventArgs e)
         {
             try
             {
+                await Navigation.PushAsync(new QuizStartedPage());
 
 
             }
@@ -51,7 +78,7 @@ namespace NewmanMobileApp.Views
         {
             try
             {
-
+                SetNumQuestion();
 
             }
             catch (Exception ex)
@@ -65,7 +92,7 @@ namespace NewmanMobileApp.Views
             try
             {
 
-
+                Environment.Exit(0);
             }
             catch (Exception ex)
             {
@@ -88,6 +115,30 @@ namespace NewmanMobileApp.Views
 
         public static void ShowMenu()
         {
+
+        }
+
+
+
+        private async void SetNumQuestion()
+        {
+
+
+            string result = await DisplayPromptAsync("SET THE NUMBER OF QUESTIONS TO ASK", "How many questions would you like to answer?", keyboard: Keyboard.Numeric);
+
+            QuizSettings.setNumQuestions = Int32.Parse(result);
+            try
+            {
+                if (QuizSettings.setNumQuestions <= 0)
+                {
+                    await DisplayAlert("Alert", "Please select a number greater than 0!", "OK");
+                    SetNumQuestion();
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Something Went Wrong!", "Make sure you are selecting a valid number greater than 0 and try again. Text options are not allowed.", "OK");
+            }
 
         }
     }
