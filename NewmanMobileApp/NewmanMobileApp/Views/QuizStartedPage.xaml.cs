@@ -1,9 +1,11 @@
 ﻿using NewmanMobileApp.Data;
 using NewmanMobileApp.Services;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Plugin.InputKit.Shared.Controls;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -12,6 +14,10 @@ namespace NewmanMobileApp.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class QuizStartedPage : ContentPage
     {
+
+        public RadioButton radioButton;
+        private static List<string> _radioList;
+
         public QuizStartedPage()
         {
             InitializeComponent();
@@ -20,7 +26,20 @@ namespace NewmanMobileApp.Views
 
         private void QuizStartedPage_Appearing(object sender, EventArgs e)
         {
+            _radioList = new List<string>();
             QuestionsLabel.Text = GenerateQuestions();
+            GenerateAnswers();
+            RadioGrid.Children.Add(AnswerButtonsGroup, 0, 1);
+            foreach (var radioItem in _radioList)
+            {
+
+                radioButton = new RadioButton();
+                radioButton.Text = radioItem;
+                AnswerButtonsGroup.Children.Add(radioButton);
+
+
+            }
+
         }
 
 
@@ -35,11 +54,11 @@ namespace NewmanMobileApp.Views
             }
             else
             {
-                
+
 
                 Console.WriteLine("Game Over\n");
                 System.Threading.Thread.Sleep(3500);
-              //  ResetData();
+                //  ResetData();
                 Console.Clear();
                 //ShowMenu();
 
@@ -98,17 +117,16 @@ namespace NewmanMobileApp.Views
         public static void GenerateAnswers()
         {
 
-
             int num = 1;
 
             foreach (string answer in QuizService.answer.Skip(1))
             {
+                _radioList.Add(answer);
                 Console.WriteLine(" " + num + ": " + answer);
                 num = num + 1;
             }
 
-            Console.WriteLine("\n");
-            Console.WriteLine("Please select your answer or type EXIT to quit.");
+
 
             QuizPage.getAnswerKey = QuizService.answerKey.ToString();
             Debug.WriteLine("ANSWER KEY: " + QuizPage.getAnswerKey);
@@ -117,8 +135,15 @@ namespace NewmanMobileApp.Views
         }
 
 
+        private void ExitQuizButton_OnClicked(object sender, EventArgs e)
+        {
+            Console.WriteLine("EXIT BUTTON HIT");
+        }
 
-
+        private void NextQuestionButton_OnClicked(object sender, EventArgs e)
+        {
+            Console.WriteLine("NEXT BUTTON HIT");
+        }
     }
 
 }
