@@ -63,7 +63,9 @@ namespace NewmanMobileApp.Views
         {
             try
             {
-                await Navigation.PushAsync(new QuizStartedPage());
+                var quizStartedPage = new QuizStartedPage();
+                await Navigation.PushAsync(quizStartedPage);
+
 
 
             }

@@ -22,7 +22,11 @@ namespace NewmanMobileApp.Views
         {
             InitializeComponent();
             this.Appearing += QuizStartedPage_Appearing;
+            
+     
         }
+
+   
 
         private void QuizStartedPage_Appearing(object sender, EventArgs e)
         {
@@ -36,6 +40,7 @@ namespace NewmanMobileApp.Views
                 radioButton = new RadioButton();
                 radioButton.Text = radioItem;
                 AnswerButtonsGroup.Children.Add(radioButton);
+                radioButton.Clicked += RadioButton_Clicked;
 
 
             }
@@ -144,6 +149,13 @@ namespace NewmanMobileApp.Views
         {
             Console.WriteLine("NEXT BUTTON HIT");
         }
+
+        private void RadioButton_Clicked(object sender, EventArgs e)
+        {
+            Console.WriteLine("RADIO IS TAPPED!!!");
+        }
+
+
     }
 
 }
