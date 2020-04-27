@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
+using Android.Net.Wifi.Aware;
 using Plugin.InputKit.Shared.Controls;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -17,19 +19,26 @@ namespace NewmanMobileApp.Views
 
         public RadioButton radioButton;
         private static List<string> _radioList;
+        public static string setAnswerChosen { get; set; }
+        private static int viewCount { get; set; } = 0;
 
         public QuizStartedPage()
         {
             InitializeComponent();
             this.Appearing += QuizStartedPage_Appearing;
-            
-     
+            this.Disappearing += QuizStartedPage_Disappearing;
+
+
         }
 
-   
+        private void QuizStartedPage_Disappearing(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
 
         private void QuizStartedPage_Appearing(object sender, EventArgs e)
         {
+
             _radioList = new List<string>();
             QuestionsLabel.Text = GenerateQuestions();
             GenerateAnswers();
@@ -70,37 +79,21 @@ namespace NewmanMobileApp.Views
             }
         }
 
-        private static void QuizLogic()
+        private async void QuizLogic()
         {
-            QuizPage.answerChosen = Console.ReadLine();
-            if (QuizPage.getAnswerKey == QuizPage.answerChosen)
+            if (QuizPage.getAnswerKey == setAnswerChosen)
             {
-                Console.WriteLine("CORRECT!");
-                QuizPage.scoreNumOfRight = QuizPage.scoreNumOfRight + 1;
-                QuizPage.scoreKeeper.numberOfCorrect = QuizPage.scoreNumOfRight;
-                QuizPage.questionCount = QuizPage.questionCount + 1;
-                System.Threading.Thread.Sleep(2000);
-                Console.Clear();
+                await DisplayAlert("Correct!", "Way to go!", "OK");
+
                 // GenerateQuiz();
             }
             else
             {
-                if (QuizPage.answerChosen.ToUpper() == "EXIT")
-                {
-                    QuizPage.isQuizStarted = false;
-                    Console.Clear();
-                    //  ShowMenu();
-                }
-                else
-                {
-                    Console.WriteLine("SORRY THAT IS INCORRECT!");
-                    QuizPage.scoreNumOfWrong = QuizPage.scoreNumOfWrong + 1;
-                    QuizPage.scoreKeeper.numberOfWrong = QuizPage.scoreNumOfWrong;
-                    QuizPage.questionCount = QuizPage.questionCount + 1;
-                    System.Threading.Thread.Sleep(2000);
-                    Console.Clear();
-                    //   GenerateQuiz();
-                }
+
+                await DisplayAlert("Sorry!", "Sorry that was incorrect, try again...", "OK");
+
+                //   GenerateQuiz();
+
             }
         }
 
@@ -140,19 +133,27 @@ namespace NewmanMobileApp.Views
         }
 
 
-        private void ExitQuizButton_OnClicked(object sender, EventArgs e)
+        private async void ExitQuizButton_OnClicked(object sender, EventArgs e)
         {
-            Console.WriteLine("EXIT BUTTON HIT");
+            await Navigation.PopAsync();
         }
 
-        private void NextQuestionButton_OnClicked(object sender, EventArgs e)
+        private async void NextQuestionButton_OnClicked(object sender, EventArgs e)
         {
-            Console.WriteLine("NEXT BUTTON HIT");
+            
+            await Navigation.PushAsync(new QuizStartedPage());
+            
+
+
         }
 
         private void RadioButton_Clicked(object sender, EventArgs e)
         {
-            Console.WriteLine("RADIO IS TAPPED!!!");
+            int answerIndexIncrement = AnswerButtonsGroup.SelectedIndex;
+            int selectedAnswer = (1 + answerIndexIncrement);
+            setAnswerChosen = selectedAnswer.ToString();
+
+            QuizLogic();
         }
 
 
