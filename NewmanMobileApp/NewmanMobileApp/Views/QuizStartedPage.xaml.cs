@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Android.Net.Wifi.Aware;
 using Plugin.InputKit.Shared.Controls;
@@ -26,34 +27,40 @@ namespace NewmanMobileApp.Views
         {
             InitializeComponent();
             this.Appearing += QuizStartedPage_Appearing;
-            this.Disappearing += QuizStartedPage_Disappearing;
 
 
         }
 
-        private void QuizStartedPage_Disappearing(object sender, EventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
 
         private void QuizStartedPage_Appearing(object sender, EventArgs e)
         {
+            GetNewQa();
+        }
+
+        private void GetNewQa()
+        {
+            if (_radioList != null)
+            {
+                _radioList.Clear();
+            }
 
             _radioList = new List<string>();
+
             QuestionsLabel.Text = GenerateQuestions();
+
             GenerateAnswers();
+
             RadioGrid.Children.Add(AnswerButtonsGroup, 0, 1);
             foreach (var radioItem in _radioList)
             {
-
                 radioButton = new RadioButton();
                 radioButton.Text = radioItem;
                 AnswerButtonsGroup.Children.Add(radioButton);
                 radioButton.Clicked += RadioButton_Clicked;
-
-
             }
 
+          
+            Console.WriteLine("Break");
         }
 
 
@@ -140,9 +147,18 @@ namespace NewmanMobileApp.Views
 
         private async void NextQuestionButton_OnClicked(object sender, EventArgs e)
         {
-            
-            await Navigation.PushAsync(new QuizStartedPage());
-            
+
+
+            AnswerButtonsGroup.Children.Clear();
+           // RadioGrid.Children.Remove(AnswerButtonsGroup);
+
+            await Task.Delay(100);
+
+            GetNewQa();
+
+
+
+
 
 
         }
