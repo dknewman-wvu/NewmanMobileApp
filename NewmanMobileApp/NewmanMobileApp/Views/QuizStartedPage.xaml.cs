@@ -22,6 +22,7 @@ namespace NewmanMobileApp.Views
         private static List<string> _radioList;
         public static string setAnswerChosen { get; set; }
         private static int viewCount { get; set; } = 0;
+        public static int questionCount { get; set; } = 1;
 
         public QuizStartedPage()
         {
@@ -147,21 +148,30 @@ namespace NewmanMobileApp.Views
 
         private async void NextQuestionButton_OnClicked(object sender, EventArgs e)
         {
+            questionCount++;
 
+            if (questionCount <= QuizSettings.setNumQuestions)
+            {
+                AnswerButtonsGroup.Children.Clear();
+                // RadioGrid.Children.Remove(AnswerButtonsGroup);
 
-            AnswerButtonsGroup.Children.Clear();
-           // RadioGrid.Children.Remove(AnswerButtonsGroup);
+                await Task.Delay(100);
 
-            await Task.Delay(100);
+                GetNewQa();
+            }
+            else
+            {
+                questionCount = 1;
+                await DisplayAlert("Game Over!", "Thanks for playing! To answer more questions, change the number of questions to be asked from the main menu!", "OK");
+                await Navigation.PopAsync();
 
-            GetNewQa();
-
-
+            }
 
 
 
 
         }
+
 
         private void RadioButton_Clicked(object sender, EventArgs e)
         {
